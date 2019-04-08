@@ -30,58 +30,56 @@ class schnorr():
         s = (k + HI(R.sec(), msg) * self.secret)%ecc.N
         return R, s
 
-    def verify(self, R, s, msg):
-        Q = s * ecc.G - HI(R.sec(),msg) * self.point
-        return Q
+    def verify(self, R, s, msg):      
+        Q = (s * ecc.G) - (HI(R.sec(),msg) * self.point)
+        return Q == R
 
-    #z = gen_msg()
-    #R, s = sign(pk, z)
-    #assert verify(R, s, z)
 
-def BN(Ns=10): # num sig
-    pks = [PrivateKey(randint(0, 2**256)) for _ in range(Ns)]
-    points = [pk.point for pk in pks]
+class BN(): # num sig
+    
+    def __init__(self, private_keys):
+        self.pks = []
+        for i in range(len(private_keys)):
+            secret = little_endian_to_int(double_sha256(private_keys[i]))
+            self.pks.append(PrivateKey(secret=secret))
+        self.points = [pk.point for pk in self.pks]
 
-    def sign(pks, z):
-        ks = [randint(0, 2**256) for _ in range(len(pks))]
+    def sign(self, msg):
+        ks = [randint(0, 2**256) for _ in range(len(self.pks))]
 
-        L = H(*[p.sec() for p in points])
+        L = H(*[p.sec() for p in self.points])
         Rs = [k*ecc.G for k in ks]
         R = sum(Rs, ecc.S256Point(None,None))
-        cs = [HI(L,p.sec(),R.sec(),z) for p in points]
-        s = sum(k + c*pk.secret for k,c,pk in zip(ks,cs,pks))%ecc.N
+        cs = [HI(L,p.sec(),R.sec(),msg) for p in self.points]
+        s = sum(k + c*pk.secret for k,c,pk in zip(ks,cs,self.pks))%ecc.N
         return R, s
 
-    def verify(R, s, z):
-        L = H(*[p.sec() for p in points])
-        cs = [HI(L,p.sec(),R.sec(),z) for p in points]
-        return R == s*ecc.G - sum((c*p for c,p in zip(cs, points)),ecc.S256Point(None,None))
+    def verify(self, R, s, msg):
+        L = H(*[p.sec() for p in self.points])
+        cs = [HI(L,p.sec(),R.sec(),msg) for p in self.points]
+        return R == s*ecc.G - sum((c*p for c,p in zip(cs, self.points)),ecc.S256Point(None,None))
 
-    z = gen_msg()
-    R, s = sign(pks, z)
-    assert verify(R, s, z)
 
-def Mu(Ns=10):
-    pks = [PrivateKey(randint(0, 2**256)) for _ in range(Ns)]
-    points = [pk.point for pk in pks]
 
-    def sign(pks, z):
-        L = H(*[p.sec() for p in points])
-        ks = [randint(0, 2**256) for _ in range(len(pks))]
+class Mu():
+    
+    def __init__(self, private_keys):
+        self.pks = []
+        for i in range(len(private_keys)):
+            secret = little_endian_to_int(double_sha256(private_keys[i]))
+            self.pks.append(PrivateKey(secret=secret))
+        self.points = [pk.point for pk in self.pks]
+
+    def sign(self, msg):
+        L = H(*[p.sec() for p in self.points])
+        ks = [randint(0, 2**256) for _ in range(len(self.pks))]
         Rs = [k*ecc.G for k in ks]
         R = sum(Rs, ecc.S256Point(None,None))
         # aggregate key
-        P = sum((HI(L, p.sec())*p for p in points), ecc.S256Point(None,None))
-        cs = [HI(R.sec(),z)*HI(L,p.sec()) for p in points]
-        s = sum([k+c*pk.secret for k,c,pk in zip(ks,cs,pks)]) % ecc.N
+        P = sum((HI(L, p.sec())*p for p in self.points), ecc.S256Point(None,None))
+        cs = [HI(R.sec(),msg)*HI(L,p.sec()) for p in self.points]
+        s = sum([k+c*pk.secret for k,c,pk in zip(ks,cs,self.pks)]) % ecc.N
         return R, s, P
 
-    def verify(R, s, z, P):
-        return R == s*ecc.G - HI(R.sec(),z)*P
-
-    z = gen_msg()
-    R, s, P = sign(pks, z)
-    assert verify(R, s, z, P)
-
-#funcs = [schnorr, BN, Mu]
-#[f() for f in funcs]
+    def verify(self, R, s, msg, P):
+        return R == s*ecc.G - HI(R.sec(),msg)*P
