@@ -12,7 +12,8 @@ Schnorr Signatures
 
 ------------------------------------------------------------------------------------------------------------------------------------
 ------------------------------------------------------------------------------------------------------------------------------------
-Schnorr:   
+Schnorr:  
+
     Instead of field division, we use hashes.
     
     Signing: 
@@ -25,7 +26,8 @@ Schnorr:
             Q = sG - Hash(R||z)P
             if Q is the same as R, signature is valid
             
-Bellare-Neven (BN):
+Bellare-Neven(BN):
+
     Generalize schnorr for multiple keys.
     Aggregates signatures.    
     In bitcoin currently, each signature has to be send seperately, so you have seperate (R,s) for every single pubkey. 
