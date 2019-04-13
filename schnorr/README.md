@@ -12,14 +12,14 @@ Schnorr Signatures
 
 ------------------------------------------------------------------------------------------------------------------------------------
 ------------------------------------------------------------------------------------------------------------------------------------
-Schnorr: 
+Schnorr:   
     
-    Given signature (R,s) and message (z) and public key (P)
-    Q = sG - Hash(R||z)P
-    
-    
-    Signing: Given a secret P=eG, select random number k
-    R = kG, s = k + Hash(R||z)e
-    Signature is (R,s)
+    Signing: 
+        Given a secret P=eG, select random number k
+        R = kG, s = k + Hash(R||z)e
+        Signature is (R,s)
     
     Verification:
+            Given signature (R,s) and message (z) and public key (P)
+            Q = sG - Hash(R||z)P
+            if Q is the same as R, signature is valid
