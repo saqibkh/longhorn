@@ -9,3 +9,17 @@ Schnorr Signatures
 -> Allows for Pubkey aggregation using MuSig.
 
 -> Demo: Sign a message we give you using a 3-of-3 MuSig aggregate key.
+
+------------------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------------------
+Schnorr: 
+    
+    Given signature (R,s) and message (z) and public key (P)
+    Q = sG - Hash(R||z)P
+    
+    
+    Signing: Given a secret P=eG, select random number k
+    R = kG, s = k + Hash(R||z)e
+    
+    
+    Verification:
