@@ -20,6 +20,6 @@ Schnorr:
     
     Signing: Given a secret P=eG, select random number k
     R = kG, s = k + Hash(R||z)e
-    
+    Signature is (R,s)
     
     Verification:
