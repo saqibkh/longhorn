@@ -13,7 +13,7 @@ Schnorr Signatures
 ------------------------------------------------------------------------------------------------------------------------------------
 ------------------------------------------------------------------------------------------------------------------------------------
 Schnorr:   
-    Instead of field division, we use hashes
+    Instead of field division, we use hashes.
     
     Signing: 
         Given a secret P=eG, select random number k
@@ -26,10 +26,10 @@ Schnorr:
             if Q is the same as R, signature is valid
             
 Bellare-Neven (BN):
-    Generalize schnorr for multiple keys
-    Aggregates signatures
-        
-    In bitcoin currently, each signature has to be send seperately, so you have seperate (R,s) for every single pubkey. We can aggregate and have a single (R,s)
+    Generalize schnorr for multiple keys.
+    Aggregates signatures.    
+    In bitcoin currently, each signature has to be send seperately, so you have seperate (R,s) for every single pubkey. 
+    We can aggregate and have a single (R,s)
         
     Signature:
         Pi = ei*G
